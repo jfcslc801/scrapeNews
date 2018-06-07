@@ -12,7 +12,7 @@ var cheerio = require("cheerio");
 // Require all models
 var db = require("./models");
 
-var PORT = 3000;
+var PORT = 2000;
 
 // Initialize Express
 var app = express();
@@ -29,13 +29,6 @@ app.use(express.static("public"));
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/scrapeNYT");
 
-// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scrapeNYT";
-
-// Set mongoose to leverage built in JavaScript ES6 Promises
-// Connect to the Mongo DB
-mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI);
 
 // Routes
 
@@ -51,14 +44,15 @@ app.get("/scrape", function(req, res) {
       // Save an empty result object
       var result = {};
 
-      // // Add the text and href of every link, and save them as properties of the result object
-      // result.title = $(this)
-      //   .children("a")
-      //   .text();
-      // result.link = $(this)
-      //   .children("a")
-      //   .attr("href");
-        var result = $(element).find("a").attr("href");
+      // Add the text and href of every link, and save them as properties of the result object
+      result.title = $(this)
+        .children("a")
+        .text();
+      result.link = $(this)
+        .children("a")
+        .attr("href");
+        // var result = $(element).find("a").attr("href");
+        // result.link = $(this).children('a').attr('href');
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
@@ -73,7 +67,8 @@ app.get("/scrape", function(req, res) {
     });
 
     // If we were able to successfully scrape and save an Article, send a message to the client
-    res.send("Scrape Complete");
+    // res.send("Scrape Complete");
+    res.redirect('/');
   });
 });
 
